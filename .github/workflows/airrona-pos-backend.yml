@@ -1,0 +1,60 @@
+name: CI/CD for Airrona POS Backend on Lightsail
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Start Deployment
+        run: echo "🚀 Starting deployment to Lightsail..."
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.LIGHTSAIL_HOST }}
+          username: ${{ secrets.LIGHTSAIL_USER }}
+          key: ${{ secrets.LIGHTSAIL_SSH_PRIVATE_KEY }}
+          script: |
+            set -e  # Exit immediately if a command fails
+            echo "🔑 Connected to Lightsail instance"
+
+            # Change to project directory
+            echo "📂 Switching to project directory..."
+            cd /home/ec2-user/Airrona-POS/backend || { echo "❌ Directory not found!"; exit 1; }
+
+            # Pull latest code
+            echo "📥 Fetching latest changes..."
+            git fetch --all || { echo "❌ Git fetch failed!"; exit 1; }
+            git reset --hard origin/main || { echo "❌ Git reset failed!"; exit 1; }
+
+            # Install dependencies
+            echo "📦 Installing dependencies..."
+            npm ci --omit=dev || { echo "❌ npm install failed!"; exit 1; }
+
+            # Restart app with PM2
+            echo "🔄 Restarting application with PM2..."
+            if pm2 describe airrona-pos-backend > /dev/null 2>&1; then
+              pm2 reload airrona-pos-backend || { echo "❌ PM2 reload failed!"; exit 1; }
+              echo "✅ PM2 app reloaded"
+            else
+              pm2 start server.js --name airrona-pos-backend || { echo "❌ PM2 start failed!"; exit 1; }
+              echo "✅ PM2 app started"
+            fi
+
+            # Save PM2 process list
+            pm2 save || { echo "⚠️ PM2 save failed, continuing anyway"; }
+
+            echo "🎉 Deployment completed successfully!"
+
+      - name: Deployment Finished
+        if: success()
+        run: echo "✅ CI/CD job finished successfully."
+
+      - name: Deployment Failed
+        if: failure()
+        run: echo "❌ Deployment failed. Check logs above."

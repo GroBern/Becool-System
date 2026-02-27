@@ -1,0 +1,14 @@
+{
+  "name": "becool-surf-school",
+  "version": "1.0.0",
+  "description": "BeCool Surf School — Full-Stack Management System",
+  "private": true,
+  "scripts": {
+    "install:all": "cd frontend && npm install && cd ../backend && npm install",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "start:backend": "cd backend && npm start",
+    "build": "cd frontend && npx vite build",
+    "start": "cd backend && node index.js"
+  }
+}

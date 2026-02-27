@@ -1,0 +1,17 @@
+export { DashboardPage, AdminDashboardPage } from "./dashboard";
+export { ActivitiesPage } from "./activities";
+export { SingleLessonsPage } from "./lessons/single";
+export { GroupLessonsPage } from "./lessons/group";
+export { PackageLessonsPage } from "./lessons/packages";
+export { StudentsPage } from "./people/students";
+export { InstructorsPage } from "./people/instructors";
+export { AgentsPage } from "./people/agents";
+export { ExpensesPage } from "./expenses";
+export { FinancesPage } from "./finances";
+export { SunbedsPage } from "./rentals/sunbeds";
+export { EquipmentPage } from "./rentals/equipment";
+export { PaymentsPage } from "./payments";
+export { ReportsPage } from "./reports";
+export { SettingsPage } from "./settings";
+export { DeleteRequestsPage } from "./delete-requests";
+export { ActivityLogPage } from "./activity-log";

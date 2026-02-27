@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Be Cool Surf School — Management System</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏄</text></svg>" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d4d0c8; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #b0aca4; }
+    input:focus, select:focus, textarea:focus { border-color: #f0c850 !important; }
+    button:active { opacity: 0.85; }
+    ::selection { background: #fdf3d0; }
+
+    /* ── Tablet Responsive (≤1024px) ───────────────────────── */
+    @media (max-width: 1024px) {
+      .app-shell { padding: 16px 16px 24px !important; }
+      .dash-grid { grid-template-columns: 1fr 1fr !important; }
+      .dash-grid .span-half { grid-column: span 1 !important; }
+      .dash-grid .span-full { grid-column: 1 / -1 !important; }
+      .nav-pills { flex-wrap: wrap; gap: 2px; border-radius: 14px !important; padding: 4px !important; justify-content: center; }
+      .nav-pill { padding: 5px 10px !important; font-size: 10.5px !important; }
+      .nav-bar { flex-wrap: wrap; gap: 10px; justify-content: center; }
+      .nav-brand { width: 100%; text-align: center; }
+      .nav-icons { order: -1; position: absolute; right: 0; top: 0; }
+      .stats-row { flex-direction: column; gap: 14px !important; }
+      .stats-values { flex-wrap: wrap; gap: 16px !important; justify-content: center; }
+      .stats-badges { flex-wrap: wrap; justify-content: center; }
+      .modal-box { max-width: 92vw !important; padding: 18px !important; }
+      .modal-wide { max-width: 92vw !important; }
+      .grid3-form { grid-template-columns: 1fr 1fr !important; }
+      .grid5-form { grid-template-columns: 1fr 1fr !important; }
+      .grid5-form > :first-child { grid-column: 1 / -1; }
+      .settings-grid { grid-template-columns: 1fr !important; }
+      .finance-stats { grid-template-columns: 1fr 1fr 1fr !important; }
+      .expense-stats { grid-template-columns: 1fr 1fr 1fr !important; }
+      .report-stats { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important; }
+      .payment-breakdown { flex-direction: column; gap: 12px !important; }
+    }
+
+    /* ── Small Tablet (≤768px) ─────────────────────────────── */
+    @media (max-width: 768px) {
+      .app-shell { padding: 12px 12px 20px !important; }
+      .dash-grid { grid-template-columns: 1fr !important; }
+      .dash-grid .span-half, .dash-grid .span-full { grid-column: span 1 !important; }
+      .nav-pills { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .nav-pills::-webkit-scrollbar { display: none; }
+      .finance-stats { grid-template-columns: 1fr !important; }
+      .expense-stats { grid-template-columns: 1fr !important; }
+      .grid3-form { grid-template-columns: 1fr !important; }
+      .grid5-form { grid-template-columns: 1fr !important; }
+      .grid5-form > :first-child { grid-column: span 1; }
+      .report-stats { grid-template-columns: 1fr 1fr !important; }
+      .lesson-card { flex-direction: column; align-items: flex-start !important; gap: 8px !important; }
+      .lesson-actions { width: 100%; }
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-BCdZFzlx.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>
