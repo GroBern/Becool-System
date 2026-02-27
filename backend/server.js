@@ -20,7 +20,7 @@ const server = http.createServer(app);
 // ── CORS — allow frontend dev server + production ─────────────────
 const corsOrigins = NODE_ENV === "production"
   ? false // same-origin in production (served from same server)
-  : ["http://localhost:3000", "http://127.0.0.1:3000"];
+  : ["http://localhost:5171", "https://main.d2dt6xtc8uv1l.amplifyapp.com"];
 
 const io = new Server(server, {
   cors: {

@@ -2,7 +2,7 @@
 //  API SERVICE — replaces localStorage load/save with HTTP calls
 // ════════════════════════════════════════════════════════════════════
 
-const BASE = "/api";
+const BASE = "https://ovu7n7ro2d.execute-api.eu-north-1.amazonaws.com/api";
 
 let authToken = null;
 let socketId = null;
