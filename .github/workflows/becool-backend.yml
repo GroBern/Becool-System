@@ -1,4 +1,4 @@
-name: CI/CD for Airrona POS Backend on Lightsail
+name: CI/CD for Becool System Backend on Lightsail
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
 
             # Change to project directory
             echo "📂 Switching to project directory..."
-            cd /home/ec2-user/Airrona-POS/backend || { echo "❌ Directory not found!"; exit 1; }
+            cd /home/ec2-user/Becool-System/backend || { echo "❌ Directory not found!"; exit 1; }
 
             # Pull latest code
             echo "📥 Fetching latest changes..."
@@ -38,11 +38,11 @@ jobs:
 
             # Restart app with PM2
             echo "🔄 Restarting application with PM2..."
-            if pm2 describe airrona-pos-backend > /dev/null 2>&1; then
-              pm2 reload airrona-pos-backend || { echo "❌ PM2 reload failed!"; exit 1; }
+            if pm2 describe becool-backend > /dev/null 2>&1; then
+              pm2 reload becool-backend || { echo "❌ PM2 reload failed!"; exit 1; }
               echo "✅ PM2 app reloaded"
             else
-              pm2 start server.js --name airrona-pos-backend || { echo "❌ PM2 start failed!"; exit 1; }
+              pm2 start server.js --name becool-backend || { echo "❌ PM2 start failed!"; exit 1; }
               echo "✅ PM2 app started"
             fi
 
