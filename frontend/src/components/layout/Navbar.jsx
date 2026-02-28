@@ -13,7 +13,7 @@ export default function Navbar({ page, setPage }) {
         style={{ fontSize: 19, fontWeight: 700, letterSpacing: "-.5px", cursor: "pointer", whiteSpace: "nowrap" }}
         onClick={() => setPage("dashboard")}
       >
-        🏄 Be Cool
+        🏄 Ama Surf
       </div>
       <div className="nav-pills" style={{ display: "flex", alignItems: "center", background: "rgba(255,255,255,.55)", backdropFilter: "blur(12px)", borderRadius: 26, padding: 3, overflowX: "auto" }}>
         {visibleNav.map((n) => (

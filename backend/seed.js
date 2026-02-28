@@ -13,7 +13,7 @@ const DEF_USERS = [
 ];
 
 const DEF_SETTINGS = {
-  businessName: "Be Cool Surf School",
+  businessName: "Ama Surf School",
   currencySymbol: "LKR ",
   location: "Weligama, Sri Lanka",
   singlePrices: { beginner: 25, intermediate: 30, advanced: 40 },

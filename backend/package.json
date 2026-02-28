@@ -1,7 +1,7 @@
 {
   "name": "becool-server",
   "version": "1.0.0",
-  "description": "BeCool Surf School — Express + MongoDB + Socket.IO backend",
+  "description": "Ama Surf School — Express + MongoDB + Socket.IO backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
