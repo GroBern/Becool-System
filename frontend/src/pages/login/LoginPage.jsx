@@ -91,7 +91,7 @@ export default function LoginPage({ onLogin }) {
               color: C.pri,
             }}
           >
-            Ama Surf School
+            Becool Surf School
           </h1>
           <p style={{ fontSize: 12, color: C.sec, marginTop: 4 }}>
             Management System
