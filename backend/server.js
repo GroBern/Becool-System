@@ -1,86 +1,109 @@
-// ════════════════════════════════════════════════════════════════════
-//  SERVER ENTRY — Express + Socket.IO + MongoDB
-// ════════════════════════════════════════════════════════════════════
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import { connectDB, getConnectionStatus } from './config/db.js';
+import { errorHandler, notFound } from './middleware/errorHandler.js';
+import { authenticate } from './middleware/auth.js';
+import User, { ALL_TABS } from './models/User.js';
 
-const express = require("express");
-const http = require("http");
-const path = require("path");
-const { Server } = require("socket.io");
-const mongoose = require("mongoose");
-const cors = require("cors");
-
-const { PORT, MONGO_URI, NODE_ENV } = require("./config");
-const { seed } = require("./seed");
-const authMiddleware = require("./middleware/auth");
-const initSocket = require("./socket");
-
-const app = express();
-const server = http.createServer(app);
-
-// ── CORS — allow frontend dev server + production ─────────────────
-const corsOrigins = NODE_ENV === "production"
-  ? false // same-origin in production (served from same server)
-  : ["http://localhost:5171", "https://main.d2dt6xtc8uv1l.amplifyapp.com"];
-
-const io = new Server(server, {
-  cors: {
-    origin: corsOrigins,
-    credentials: true,
-  },
+// Prevent unhandled rejections from crashing the server
+process.on('unhandledRejection', (reason) => {
+    console.warn('Unhandled rejection (suppressed):', reason instanceof Error ? reason.message : reason);
 });
 
-// Make io accessible in route handlers
-app.set("io", io);
+// Route imports
+import authRouter from './routes/auth.js';
+import lessonsRouter from './routes/lessons.js';
+import groupLessonsRouter from './routes/groupLessons.js';
+import boardRentalsRouter from './routes/boardRentals.js';
+import sunbedRentalsRouter from './routes/sunbedRentals.js';
+import instructorsRouter from './routes/instructors.js';
+import studentsRouter from './routes/students.js';
+import agentsRouter from './routes/agents.js';
+import agentCommissionsRouter from './routes/agentCommissions.js';
+import paymentsRouter from './routes/payments.js';
+import reportsRouter from './routes/reports.js';
+import settingsRouter from './routes/settings.js';
+import seedRouter from './seed.js';
+const app = express();
+const PORT = process.env.PORT || 5000;
 
-// ── Middleware ─────────────────────────────────────────────────────
-app.use(cors({ origin: corsOrigins, credentials: true }));
-app.use(express.json({ limit: "10mb" }));
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-// ── API Routes ────────────────────────────────────────────────────
-app.use("/api/auth", require("./routes/auth"));
-app.use("/api/data", authMiddleware, require("./routes/collections"));
-app.use("/api/settings", authMiddleware, require("./routes/settings"));
-app.use("/api/users", authMiddleware, require("./routes/users"));
-app.use("/api/backup", authMiddleware, require("./routes/backup"));
-app.use("/api/reset", authMiddleware, require("./routes/reset"));
-app.use("/api/operators", authMiddleware, require("./routes/operators"));
-app.use("/api/activity-logs", authMiddleware, require("./routes/activityLogs"));
+// DB check middleware - returns 503 if MongoDB is temporarily disconnected
+app.use('/api', (req, res, next) => {
+    if (req.path === '/health')
+        return next();
+    if (!getConnectionStatus()) {
+        return res.status(503).json({ error: 'Database not connected. MongoDB may be restarting.' });
+    }
+    next();
+});
 
-// ── Health check ──────────────────────────────────────────────────
-app.get("/api/health", (req, res) => res.json({ status: "ok", env: NODE_ENV }));
+// Public routes (no auth required)
+app.use('/api/auth', authRouter);
 
-// ── Serve frontend build in production ────────────────────────────
-if (NODE_ENV === "production") {
-  const frontendDist = path.join(__dirname, "..", "frontend", "dist");
-  app.use(express.static(frontendDist));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(frontendDist, "index.html"));
-  });
+// Health check (public)
+app.get('/health', (_req, res) => {
+    res.json({
+        status: 'ok',
+        message: 'Becool Surf School backend is running',
+        database: getConnectionStatus() ? 'connected' : 'disconnected',
+        timestamp: new Date().toISOString(),
+    });
+});
+
+// Protected routes (auth required)
+app.use('/api/lessons', authenticate, lessonsRouter);
+app.use('/api/group-lessons', authenticate, groupLessonsRouter);
+app.use('/api/board-rentals', authenticate, boardRentalsRouter);
+app.use('/api/sunbed-rentals', authenticate, sunbedRentalsRouter);
+app.use('/api/instructors', authenticate, instructorsRouter);
+app.use('/api/students', authenticate, studentsRouter);
+app.use('/api/agents', authenticate, agentsRouter);
+app.use('/api/agent-commissions', authenticate, agentCommissionsRouter);
+app.use('/api/payments', authenticate, paymentsRouter);
+app.use('/api/reports', authenticate, reportsRouter);
+app.use('/api/settings', authenticate, settingsRouter);
+app.use('/api/seed', authenticate, seedRouter);
+
+// Error handling
+app.use(notFound);
+app.use(errorHandler);
+
+// Seed default admin account if none exists
+async function seedDefaultAdmin() {
+    try {
+        const adminCount = await User.countDocuments({ role: 'admin' });
+        if (adminCount === 0) {
+            const admin = new User({
+                username: 'admin',
+                password: 'admin123',
+                displayName: 'Administrator',
+                role: 'admin',
+                allowedTabs: [...ALL_TABS],
+                isActive: true,
+                createdBy: 'system',
+            });
+            await admin.save();
+            console.log('Default admin account created (username: admin, password: admin123)');
+        }
+    }
+    catch (err) {
+        console.warn('Could not seed admin:', err instanceof Error ? err.message : err);
+    }
 }
 
-// ── Error handler ─────────────────────────────────────────────────
-app.use((err, req, res, _next) => {
-  console.error("[Error]", err.message);
-  res.status(500).json({ error: "Internal server error" });
-});
-
-// ── Socket.IO ─────────────────────────────────────────────────────
-initSocket(io);
-
-// ── Connect & Start ───────────────────────────────────────────────
-mongoose
-  .connect(MONGO_URI)
-  .then(async () => {
-    console.log("[MongoDB] Connected to", MONGO_URI);
-    await seed();
-    server.listen(PORT, () => {
-      console.log(`[Server] Running on http://localhost:${PORT} (${NODE_ENV})`);
-      if (NODE_ENV === "production") {
-        console.log(`[Server] Serving frontend from ../frontend/dist`);
-      }
+// Start - wait for MongoDB, then start server
+async function start() {
+    console.log('Connecting to MongoDB...');
+    await connectDB();
+    await seedDefaultAdmin();
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+        console.log('MongoDB connected - API ready');
     });
-  })
-  .catch((err) => {
-    console.error("[MongoDB] Connection failed:", err.message);
-    process.exit(1);
-  });
+}
+start();

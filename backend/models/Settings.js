@@ -1,11 +1,17 @@
-const mongoose = require("mongoose");
-
-const settingsSchema = new mongoose.Schema(
-  {
-    _singleton: { type: String, default: "settings", unique: true },
-    data: { type: mongoose.Schema.Types.Mixed, required: true },
-  },
-  { timestamps: true, minimize: false }
-);
-
-module.exports = mongoose.model("Settings", settingsSchema);
+import mongoose, { Schema } from 'mongoose';
+const SettingsSchema = new Schema({
+    _id: { type: String, default: () => `settings-${Date.now()}` },
+    schoolName: { type: String, default: '' },
+    schoolPhone: { type: String, default: '' },
+    schoolEmail: { type: String, default: '' },
+    schoolAddress: { type: String, default: '' },
+}, { timestamps: true, _id: false });
+SettingsSchema.set('toJSON', {
+    virtuals: true,
+    transform: (_doc, ret) => {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+    },
+});
+export default mongoose.model('Settings', SettingsSchema);

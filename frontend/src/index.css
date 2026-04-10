@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand: #8B5CF6;
+  --color-brand-light: var(--brand-light);
+  --color-bg-main: var(--bg-main);
+  --color-card-bg: var(--surface);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+
+  /* Semantic surface colors */
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-subtle: var(--surface-subtle);
+
+  /* Semantic border colors */
+  --color-border-default: var(--border-default);
+  --color-border-light: var(--border-light);
+
+  /* Icon color */
+  --color-icon-default: var(--icon-default);
+}
+
+:root {
+  --surface: #FFFFFF;
+  --surface-alt: #F0F0F5;
+  --surface-dim: #F3F4F6;
+  --surface-subtle: #F9FAFB;
+  --border-default: #E5E7EB;
+  --border-light: #F3F4F6;
+  --icon-default: #9CA3AF;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --bg-main: #E5E7EB;
+  --brand-light: #EDE9FE;
+  color-scheme: light;
+}
+
+.dark {
+  --surface: #1B1C2E;
+  --surface-alt: #0E0F1A;
+  --surface-dim: #242538;
+  --surface-subtle: #1F2035;
+  --border-default: #2B2C42;
+  --border-light: #1F2035;
+  --icon-default: #5A5A70;
+  --text-primary: #E6E6F0;
+  --text-secondary: #7C7C95;
+  --bg-main: #0E0F1A;
+  --brand-light: #2B1F5E;
+  color-scheme: dark;
+}
+
+@layer base {
+  body {
+    @apply bg-bg-main text-text-primary font-sans antialiased;
+  }
+}
+
+/* Smooth theme transitions on structural elements */
+body,
+aside,
+main,
+header {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--icon-default);
+}

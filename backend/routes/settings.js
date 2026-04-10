@@ -1,52 +1,44 @@
-// ════════════════════════════════════════════════════════════════════
-//  SETTINGS ROUTES — GET/PUT singleton settings document
-// ════════════════════════════════════════════════════════════════════
-
-const router = require("express").Router();
-const Settings = require("../models/Settings");
-const logActivity = require("../utils/logActivity");
-
-// GET /api/settings
-router.get("/", async (req, res) => {
-  try {
-    const doc = await Settings.findOne({ _singleton: "settings" });
-    res.json({ data: doc ? doc.data : {} });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to load settings" });
-  }
-});
-
-// PUT /api/settings
-router.put("/", async (req, res) => {
-  try {
-    const { data } = req.body;
-    if (!data || typeof data !== "object") {
-      return res.status(400).json({ error: "data must be an object" });
+import { Router } from 'express';
+import Settings from '../models/Settings.js';
+const router = Router();
+const DEFAULT_SETTINGS = {
+    _id: 'settings-1',
+    schoolName: 'SurfDesk Surf School',
+    schoolPhone: '+1 555 0000',
+    schoolEmail: 'info@surfdesk.com',
+    schoolAddress: 'Bondi Beach, Sydney, Australia',
+};
+// GET / - Get settings (find first, create default if none)
+router.get('/', async (_req, res) => {
+    try {
+        let settings = await Settings.findOne();
+        if (!settings) {
+            settings = await Settings.create(DEFAULT_SETTINGS);
+        }
+        res.json(settings);
     }
-
-    const doc = await Settings.findOneAndUpdate(
-      { _singleton: "settings" },
-      { data },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
-
-    // Broadcast to other clients
-    const io = req.app.get("io");
-    const senderSocketId = req.headers["x-socket-id"];
-    if (io) {
-      if (senderSocketId) {
-        io.except(senderSocketId).emit("settings:updated", { data: doc.data });
-      } else {
-        io.emit("settings:updated", { data: doc.data });
-      }
+    catch (err) {
+        res.status(500).json({ error: err.message });
     }
-
-    logActivity(req.user, "updated", "settings", `${req.user.name} updated settings`);
-
-    res.json({ data: doc.data });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to save settings" });
-  }
 });
-
-module.exports = router;
+// PUT / - Update settings (findOneAndUpdate with upsert)
+router.put('/', async (req, res) => {
+    try {
+        const data = { ...req.body };
+        if (data.id) {
+            data._id = data.id;
+            delete data.id;
+        }
+        const settings = await Settings.findOneAndUpdate({}, data, {
+            new: true,
+            upsert: true,
+            runValidators: true,
+            setDefaultsOnInsert: true,
+        });
+        res.json(settings);
+    }
+    catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+export default router;

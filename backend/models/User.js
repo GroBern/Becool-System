@@ -1,41 +1,58 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
-
-const userSchema = new mongoose.Schema(
-  {
-    id: { type: String, required: true, unique: true },
-    username: { type: String, required: true, unique: true },
+import mongoose, { Schema } from 'mongoose';
+import bcrypt from 'bcryptjs';
+export const ALL_TABS = [
+    'dashboard',
+    'lessons',
+    'group-lessons',
+    'rentals',
+    'sunbeds',
+    'schedule',
+    'instructors',
+    'students',
+    'agents',
+    'payments',
+    'reports',
+    'settings',
+];
+const UserSchema = new Schema({
+    _id: {
+        type: String,
+        default: () => `user-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    },
+    username: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true },
-    pin: { type: String, default: "" },
-    name: { type: String, required: true },
-    role: { type: String, enum: ["admin", "cashier"], required: true },
-  },
-  { timestamps: true }
-);
-
-// Hash password and pin before save (only when modified)
-userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
-  if (this.isModified("pin") && this.pin) {
-    this.pin = await bcrypt.hash(this.pin, 10);
-  }
-  next();
+    displayName: { type: String, required: true },
+    role: {
+        type: String,
+        enum: ['admin', 'manager', 'worker'],
+        default: 'worker',
+    },
+    allowedTabs: {
+        type: [String],
+        default: ['dashboard'],
+    },
+    isActive: { type: Boolean, default: true },
+    createdBy: { type: String, default: '' },
+}, { timestamps: true, _id: false });
+// Hash password before saving
+UserSchema.pre('save', async function (next) {
+    if (!this.isModified('password'))
+        return next();
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
 });
-
-userSchema.methods.comparePassword = function (candidate) {
-  return bcrypt.compare(candidate, this.password);
+// Compare password method
+UserSchema.methods.comparePassword = async function (candidate) {
+    return bcrypt.compare(candidate, this.password);
 };
-
-userSchema.methods.comparePin = function (candidate) {
-  if (!this.pin) return Promise.resolve(false);
-  return bcrypt.compare(candidate, this.pin);
-};
-
-// Return plain object matching frontend shape (no password/pin hash)
-userSchema.methods.toClient = function () {
-  return { id: this.id, username: this.username, name: this.name, role: this.role, hasPin: !!this.pin };
-};
-
-module.exports = mongoose.model("User", userSchema);
+UserSchema.set('toJSON', {
+    virtuals: true,
+    transform: (_doc, ret) => {
+        ret.id = ret._id;
+        delete ret.password;
+        delete ret.__v;
+        return ret;
+    },
+});
+export default mongoose.model('User', UserSchema);
