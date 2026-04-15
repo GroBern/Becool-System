@@ -187,7 +187,7 @@ export default function UserManagement() {
         }
       />
 
-      <div className="flex-1 overflow-y-auto px-10 pb-10 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 pb-6 lg:pb-10 custom-scrollbar">
         {/* Search */}
         <div className="relative mb-6">
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary" />

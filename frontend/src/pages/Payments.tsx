@@ -206,9 +206,9 @@ export default function Payments() {
         subtitle={`${filteredPayments.length} payment${filteredPayments.length !== 1 ? 's' : ''} found`}
       />
 
-      <div className="flex-1 overflow-y-auto px-10 pb-10 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 pb-6 lg:pb-10 custom-scrollbar">
         {/* Summary Cards */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
           <div className="bg-surface border border-border-default shadow-sm rounded-3xl p-5 flex flex-col gap-1">
             <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Total Received Today</span>
             <div className="flex items-center gap-2">
@@ -245,7 +245,7 @@ export default function Payments() {
             <Filter size={14} className="text-text-secondary" />
             <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Filters</span>
           </div>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
             <FormField label="From Date">
               <FormInput type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
             </FormField>

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Plus,
   BookOpen,
@@ -14,7 +14,6 @@ import {
 import {
   BarChart,
   Bar,
-  ResponsiveContainer,
   LineChart,
   Line,
   Cell,
@@ -73,31 +72,29 @@ function SmallStatCard({
             )}
           </div>
         </div>
-        <div className="w-24 h-12" style={{ minWidth: 96, minHeight: 48 }}>
-          <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
-            {type === 'bar' ? (
-              <BarChart data={data}>
-                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                  {data.map((_, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={index === data.length - 1 ? barActive : barInactive}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            ) : (
-              <LineChart data={data}>
-                <Line
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#8B5CF6"
-                  strokeWidth={2}
-                  dot={{ r: 3, fill: '#8B5CF6' }}
-                />
-              </LineChart>
-            )}
-          </ResponsiveContainer>
+        <div className="w-24 h-12">
+          {type === 'bar' ? (
+            <BarChart width={96} height={48} data={data}>
+              <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                {data.map((_, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={index === data.length - 1 ? barActive : barInactive}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          ) : (
+            <LineChart width={96} height={48} data={data}>
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#8B5CF6"
+                strokeWidth={2}
+                dot={{ r: 3, fill: '#8B5CF6' }}
+              />
+            </LineChart>
+          )}
         </div>
       </div>
       <div className="flex justify-between text-[8px] text-text-secondary font-bold uppercase tracking-wider">
@@ -189,6 +186,20 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const today = new Date().toISOString().split('T')[0];
   const isDark = theme === 'dark';
+
+  // Measure the revenue chart container so we can pass explicit width to
+  // Recharts (avoids ResponsiveContainer initial -1/-1 measurement warning).
+  const revChartRef = useRef<HTMLDivElement | null>(null);
+  const [revChartWidth, setRevChartWidth] = useState(0);
+  useEffect(() => {
+    const el = revChartRef.current;
+    if (!el) return;
+    const update = () => setRevChartWidth(el.clientWidth || 0);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // Chart colors
   const chartBarInactive = isDark ? '#3D2F6E' : '#DDD6FE';
@@ -427,18 +438,18 @@ export default function Dashboard() {
         }
       />
 
-      <div className="flex-1 overflow-y-auto px-10 pb-10 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 pb-6 lg:pb-10 custom-scrollbar">
         {/* ── 1. Summary Banner ────────────────────────────────── */}
-        <div className="bg-brand rounded-3xl p-6 mb-6 text-white relative overflow-hidden">
-          <div className="flex items-center justify-between relative z-10">
+        <div className="bg-brand rounded-3xl p-4 sm:p-6 mb-6 text-white relative overflow-hidden">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between relative z-10">
             <div className="flex flex-col gap-1">
               <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">
                 Today's Summary
               </span>
-              <span className="text-3xl font-bold">Surf School Dashboard</span>
-              <span className="text-sm opacity-80 font-medium mt-1">{dateStr}</span>
+              <span className="text-2xl sm:text-3xl font-bold">Surf School Dashboard</span>
+              <span className="text-xs sm:text-sm opacity-80 font-medium mt-1">{dateStr}</span>
             </div>
-            <div className="flex gap-6">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:flex lg:gap-6">
               <SummaryBox label="Total Bookings" value={computed.totalBookings} />
               <SummaryBox label="Lessons Today" value={computed.totalLessonCount} />
               <SummaryBox label="Boards Out" value={computed.activeBoardRentals.length} />
@@ -452,7 +463,7 @@ export default function Dashboard() {
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24 blur-2xl" />
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
           {/* ── 2. Top Row Stats ──────────────────────────────── */}
           <SmallStatCard
             title="Active Lessons"
@@ -510,9 +521,9 @@ export default function Dashboard() {
               </span>
             </div>
 
-            <div className="h-24" style={{ minHeight: 96 }}>
-              <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1} debounce={50}>
-                <BarChart data={dailyRevData}>
+            <div ref={revChartRef} className="h-24 w-full">
+              {revChartWidth > 0 && (
+                <BarChart width={revChartWidth} height={96} data={dailyRevData}>
                   <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                     {dailyRevData.map((_, index) => (
                       <Cell
@@ -522,7 +533,7 @@ export default function Dashboard() {
                     ))}
                   </Bar>
                 </BarChart>
-              </ResponsiveContainer>
+              )}
             </div>
             <div className="flex justify-between text-[8px] text-text-secondary font-bold uppercase tracking-wider">
               {dailyRevData.map((d, i) => (

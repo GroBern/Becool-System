@@ -50,8 +50,8 @@ export default function Settings() {
         subtitle="Manage your surf school configuration"
       />
 
-      <div className="flex-1 overflow-y-auto px-10 pb-10 custom-scrollbar">
-        <div className="grid grid-cols-2 gap-6 max-w-4xl">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 pb-6 lg:pb-10 custom-scrollbar">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 max-w-4xl">
           {/* School Info */}
           <div className="col-span-2 bg-surface p-6 rounded-3xl border border-border-default shadow-sm flex flex-col gap-5">
             <div className="flex items-center gap-3">

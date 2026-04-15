@@ -91,7 +91,7 @@ export default function Schedule() {
         }
       />
 
-      <div className="flex-1 overflow-hidden px-10 pb-10 flex flex-col">
+      <div className="flex-1 overflow-hidden px-4 sm:px-6 lg:px-10 pb-6 lg:pb-10 flex flex-col">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <button onClick={prevWeek} className="w-8 h-8 rounded-lg bg-surface-dim flex items-center justify-center text-icon-default hover:bg-border-default">

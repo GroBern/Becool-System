@@ -585,7 +585,7 @@ export default function Reports() {
         }
       />
 
-      <div className="px-10 pb-10 space-y-8">
+      <div className="px-4 sm:px-6 lg:px-10 pb-6 lg:pb-10 space-y-8">
         {/* Date Range Selector */}
         <div className="bg-surface border border-border-default shadow-sm rounded-3xl p-6">
           <div className="flex flex-wrap items-center gap-4">

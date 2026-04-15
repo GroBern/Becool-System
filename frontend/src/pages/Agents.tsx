@@ -148,9 +148,9 @@ export default function Agents() {
         }
       />
 
-      <div className="flex-1 overflow-y-auto px-10 pb-10 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 pb-6 lg:pb-10 custom-scrollbar">
         {/* Summary Row */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
           <div className="bg-surface border border-border-default shadow-sm rounded-3xl p-5 flex flex-col gap-1">
             <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Total Agents</span>
             <span className="text-2xl font-bold">{globalSummary.totalAgents}</span>
@@ -172,7 +172,7 @@ export default function Agents() {
         </div>
 
         {/* Agent Cards Grid */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
           {state.agents.length === 0 && (
             <div className="col-span-2 text-center py-16">
               <Users size={48} className="text-border-default mx-auto mb-4" />

@@ -134,9 +134,9 @@ export default function BoardRentals() {
         }
       />
 
-      <div className="flex-1 overflow-y-auto px-10 pb-10 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 pb-6 lg:pb-10 custom-scrollbar">
         {/* Summary Cards */}
-        <div className="grid grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-6">
           <div className="bg-surface p-5 rounded-3xl border border-border-default shadow-sm flex items-center gap-4">
             <div className="p-3 rounded-xl bg-green-500"><Sailboat size={24} className="text-white" /></div>
             <div className="flex flex-col"><span className="text-2xl font-bold">{activeCount}</span><span className="text-xs text-text-secondary font-medium">Active Rentals</span></div>
@@ -164,7 +164,7 @@ export default function BoardRentals() {
         </div>
 
         {/* Rentals List */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
           {filtered.length === 0 && (
             <div className="col-span-2 text-center py-16">
               <Sailboat size={48} className="text-border-default mx-auto mb-4" />
