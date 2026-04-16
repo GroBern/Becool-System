@@ -114,3 +114,8 @@ header {
   .animate-blob,
   .animate-shake { animation: none; }
 }
+
+/* ─── Safe area for bottom nav on notched devices ─── */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}

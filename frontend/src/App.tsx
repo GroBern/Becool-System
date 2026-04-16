@@ -5,8 +5,10 @@ import { AppProvider } from './context/AppContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Sidebar from './components/Sidebar';
+import BottomNav from './components/BottomNav';
 import ErrorBoundary from './components/ErrorBoundary';
 import PWAUpdatePrompt from './components/PWAUpdatePrompt';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 import type { TabKey } from './types';
 
 // Route-level code splitting: each page loads on demand.
@@ -106,11 +108,11 @@ function AppLayout() {
 
   return (
     <AppProvider>
-      <div className="flex h-[100dvh] w-full overflow-hidden bg-surface-alt p-2 sm:p-4 lg:p-6">
+      <div className="flex h-[100dvh] w-full overflow-hidden bg-surface-alt p-0 sm:p-2 lg:p-6">
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        <main className="flex flex-1 min-w-0 flex-col overflow-hidden rounded-2xl lg:rounded-[40px] bg-surface shadow-xl shadow-black/5 dark:shadow-black/30">
+        <main className="flex flex-1 min-w-0 flex-col overflow-hidden rounded-none sm:rounded-2xl lg:rounded-[40px] bg-surface shadow-xl shadow-black/5 dark:shadow-black/30">
           {/* Mobile topbar */}
-          <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-border-default bg-surface/95 px-4 py-3 backdrop-blur">
+          <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-border-default bg-surface/95 px-4 py-2.5 backdrop-blur">
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
@@ -148,6 +150,9 @@ function AppLayout() {
               </Routes>
             </Suspense>
           </div>
+
+          {/* Mobile bottom navigation */}
+          <BottomNav onOpenMenu={() => setSidebarOpen(true)} />
         </main>
       </div>
     </AppProvider>
@@ -162,6 +167,7 @@ export default function App() {
           <BrowserRouter>
             <AppLayout />
             <PWAUpdatePrompt />
+            <PWAInstallPrompt />
           </BrowserRouter>
         </AuthProvider>
       </ThemeProvider>
