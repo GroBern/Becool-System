@@ -1,6 +1,6 @@
-import React, { Suspense, lazy, useState } from 'react';
+import React, { Suspense, lazy, useState, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { Menu, Waves } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { AppProvider } from './context/AppContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -78,10 +78,30 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+const ROUTE_TITLES: Record<string, string> = {
+  '/': 'Dashboard',
+  '/lessons': 'Lessons',
+  '/group-lessons': 'Group Lessons',
+  '/rentals': 'Board Rentals',
+  '/sunbeds': 'Sunbed Rentals',
+  '/instructors': 'Instructors',
+  '/students': 'Students',
+  '/agents': 'Agents',
+  '/schedule': 'Schedule',
+  '/payments': 'Payments',
+  '/reports': 'Reports',
+  '/settings': 'Settings',
+  '/users': 'User Management',
+};
+
 function AppLayout() {
   const { user, loading } = useAuth();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pageTitle = useMemo(
+    () => ROUTE_TITLES[location.pathname] || 'Becool Surf',
+    [location.pathname]
+  );
 
   if (loading) {
     return (
@@ -111,23 +131,28 @@ function AppLayout() {
       <div className="flex h-[100dvh] w-full overflow-hidden bg-surface-alt p-0 sm:p-2 lg:p-6">
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <main className="flex flex-1 min-w-0 flex-col overflow-hidden rounded-none sm:rounded-2xl lg:rounded-[40px] bg-surface shadow-xl shadow-black/5 dark:shadow-black/30">
-          {/* Mobile topbar */}
-          <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-border-default bg-surface/95 px-4 py-2.5 backdrop-blur">
+          {/* Mobile topbar — shows CURRENT PAGE TITLE, respects iOS safe area */}
+          <header
+            className="lg:hidden sticky top-0 z-30 flex items-center gap-2 border-b border-border-default bg-surface/95 px-3 backdrop-blur"
+            style={{
+              paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.5rem)',
+              paddingBottom: '0.5rem',
+              paddingLeft: 'calc(env(safe-area-inset-left, 0px) + 0.75rem)',
+              paddingRight: 'calc(env(safe-area-inset-right, 0px) + 0.75rem)',
+            }}
+          >
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              className="rounded-xl p-2 text-text-primary hover:bg-surface-dim active:scale-95 transition"
+              className="rounded-xl p-2 -ml-1 text-text-primary hover:bg-surface-dim active:scale-95 transition shrink-0"
               aria-label="Open menu"
             >
               <Menu size={22} />
             </button>
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-brand rounded-lg flex items-center justify-center shadow shadow-brand/20">
-                <Waves size={14} className="text-white" />
-              </div>
-              <span className="text-sm font-bold tracking-tight">Becool Surf</span>
-            </div>
-            <div className="w-9" />
+            <h1 className="flex-1 min-w-0 text-[15px] font-bold tracking-tight truncate">
+              {pageTitle}
+            </h1>
+            <div className="w-8 shrink-0" />
           </header>
 
           <div className="flex-1 min-h-0 overflow-auto">

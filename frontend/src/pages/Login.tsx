@@ -363,9 +363,18 @@ export default function Login() {
             </div>
           </div>
 
-          <p className="text-center text-[10px] text-text-secondary mt-5 font-medium">
-            © {year} Becool Surf School • v2.0
-          </p>
+          <div className="mt-5 flex flex-col items-center gap-1 text-center">
+            <p className="text-[10px] text-text-secondary font-medium">
+              © {year} Becool Surf School • v2.0
+            </p>
+            <p className="text-[10px] text-text-secondary/80">
+              Experience Crafted by{' '}
+              <span className="font-semibold text-text-secondary">Studio ColArt</span>
+              <span className="mx-1.5 opacity-50">·</span>
+              Platform Powered by{' '}
+              <span className="font-semibold text-text-secondary">BeddleHub</span>
+            </p>
+          </div>
         </div>
       </main>
     </div>
