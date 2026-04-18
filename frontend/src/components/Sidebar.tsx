@@ -135,6 +135,13 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           'lg:static lg:inset-auto lg:translate-x-0 lg:w-64 lg:max-w-none lg:bg-transparent lg:shadow-none lg:p-0 lg:pr-4 lg:flex lg:flex-col lg:gap-4 lg:shrink-0',
           'flex flex-col gap-4'
         )}
+        // iOS safe-area + notch: push content below the status bar on mobile.
+        // Reset to defaults at lg+ where the drawer becomes a static sidebar.
+        style={{
+          paddingTop: 'max(1rem, env(safe-area-inset-top, 0px))',
+          paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0px))',
+          paddingLeft: 'max(1rem, env(safe-area-inset-left, 0px))',
+        }}
         aria-label="Sidebar"
       >
         {/* Header row */}
